@@ -68,8 +68,12 @@ function SearchContinue{
 		Write-Host("Search page 3")
 	} else {
 		$searchNextOld = $searchNext
-		$searchNext = IncrementNextPageURL $searchNextOld
-		Write-Host("Search page above 3 from URL $searchNext")
+		Write-Host("searchNext: $searchNext")
+		[string]$searchNextUpdated = IncrementNextPageURL $searchNextOld		
+		$type = $searchNextUpdated.GetType()
+		Write-Host("SearchNextUpdated is $searchNextUpdated, type $type. page above 3 from URL $searchNext")
+		$searchNext = ""
+		$searchNext = $searchNextUpdated
 	}
 	Search $searchTerm $numberSearchResultsRequested $searchNext
 }
@@ -93,7 +97,7 @@ function IncrementNextPageURL(){
 		$linkNumbers = $linkNumbersInt.ToString()
 		$linkNumbers += "1"
 		$linkNextBeginning += $linkNumbers
-		$linkNextBeginning += ($linkNext -Split "&")[-1]
+		$linkNextBeginning += ("&" + ($linkNext -Split "&")[-1])
 		$linkNext = $linkNextBeginning
 		Write-Host("linkNext updated to $linkNext")
 
@@ -104,7 +108,7 @@ function IncrementNextPageURL(){
 		$linkNumbers = $linkNumbers.ToString()
 		
 		$linkFinal = $linkNextSplit[0]
-		Write-Host("linkFinal is  $linkFinal")
+		Write-Host("linkFinal is  $linkFinal and linkNumbers is $linkNumbers")
 		$linkFinal += $linkNumbers  
 		
 		$linkFinal.Replace(" ", "")  # NOT WORKING; SHOULD REMOVE ALL INSTANCES OF " " IN THE URL STRING          
