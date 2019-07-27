@@ -62,12 +62,55 @@ function SearchContinue{
 	if (-not $searchNext){
 		$searchNext = $searchPage2
 		Write-Host("4. Need $numberResultsRequested more results")
-		Search $searchTerm $numberSearchResultsRequested $searchNext
+		# Search $searchTerm $numberSearchResultsRequested $searchNext
 	} elseif ($searchNext -eq $searchPage2) {
-		Write-Host("Search page 3")		
+		$searchNext = $searchPage3
+		Write-Host("Search page 3")
 	} else {
-		Write-Host("Search page above 3")
-	}	
+		$searchNextOld = $searchNext
+		$searchNext = IncrementNextPageURL $searchNextOld
+		Write-Host("Search page above 3 from URL $searchNext")
+	}
+	Search $searchTerm $numberSearchResultsRequested $searchNext
+}
+
+function IncrementNextPageURL(){
+	    Param(
+        [Parameter(Position=0,
+          Mandatory=$False,
+          ValueFromPipeline=$True)]
+        [string]$linkNext        
+		)
+      
+		# Increment first number
+		$linkNextBeginning = "&first="
+
+		$linkNumbers = (($linkNext -split "&")[1]) -replace '\D+(\d+)','$1'
+		$linkNumbers.Substring(0, $linkNumbers.Length -1)
+		$linkNumbersInt = [int]$linkNumbers.Substring(0, $linkNumbers.Length -1)
+
+		$linkNumbersInt++
+		$linkNumbers = $linkNumbersInt.ToString()
+		$linkNumbers += "1"
+		$linkNextBeginning += $linkNumbers
+		$linkNextBeginning += ($linkNext -Split "&")[-1]
+		$linkNext = $linkNextBeginning
+		Write-Host("linkNext updated to $linkNext")
+
+		# Increment final number
+		$linkNextSplit = $linkNext -Split "PERE"
+		$linkNumbers = [int]($linkNextSplit[-1])
+		$linkNumbers++
+		$linkNumbers = $linkNumbers.ToString()
+		
+		$linkFinal = $linkNextSplit[0]
+		Write-Host("linkFinal is  $linkFinal")
+		$linkFinal += $linkNumbers  
+		
+		$linkFinal.Replace(" ", "")  # NOT WORKING; SHOULD REMOVE ALL INSTANCES OF " " IN THE URL STRING          
+
+		Write-Host("Returning $linkFinal")
+		return $linkFinal
 }
 
 # function SearchMore(){
