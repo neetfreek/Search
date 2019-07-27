@@ -1,4 +1,9 @@
+# Bing search URLs
 $search = "https://www.bing.com/?q="
+$searchNext = ""
+$searchPage2 = "&first=11&FORM=PERE"
+$searchPage3 = "&first=21&FORM=PERE1"
+$searchResults = @()
 
 function Search(){
 Param(
@@ -7,134 +12,248 @@ Param(
       ValueFromPipeline=$True)]
     [string]$searchTerm,
     [Parameter(Position=1,
-      Mandatory=$False,
+      Mandatory=$True,
       ValueFromPipeline=$True)]
-    [int]$numberResults
-  )
-    
-    # Convert requested search results number to 0-based index
-    $numberResults -= 1
-    $searchResults = (Invoke-WebRequest $search$searchTerm).Links.href -match "http" -notmatch "microsoft" -notmatch "bing"
+	[int]$numberSearchResultsRequested,
+	[Parameter(Position=2,
+	Mandatory=$False,
+	ValueFromPipeline=$True)]
+	[string]$searchNext
+	)
+			
+	$numberResultsRequested = $numberSearchResultsRequested
+	
+	$moreResults = (Invoke-WebRequest $search$searchTerm$searchNext).Links.href -match "http" -notmatch "microsoft" -notmatch "bing"
+	$moreResultsLength = $moreResults.Length
 
-    if ($numberResults -le $searchResults.Length){
-        $searchResults[0..$numberResults]
-    }
-    else {            
-        $numberResults -= $searchResults.Length
-        SearchMore $searchTerm $numberResults $searchResults
-    }
+	Write-Host("1. Found $moreResultsLength results of $numberResultsRequested")
 
-    Write-Host("Search complete.");
+
+	$searchResultsUpdated = TailorNumberMoreResults $moreResults $numberResultsRequested
+	$searchResultsUpdatedLength = $searchResultsUpdated.Length
+	$numberResultsRequested -= $searchResultsUpdatedLength
+
+	Write-Host("2. Search results updated to $searchResultsUpdatedLength results of $numberResultsRequested ")
+
+	$searchResults = $searchResults + $searchResultsUpdated
+
+	if (-not (TestEnoughResults $numberResultsRequested)){
+		Write-Host("3. Need $numberResultsRequested more results")
+		SearchContinue $searchTerm $numberResultsRequested
+	}
+	else {
+		DisplayResults $searchResults
+		Write-Host("***Search complete***")
+	}
 }
 
-function SearchMore(){
-    Param(
-        [Parameter(Position=0,
-          Mandatory=$True,
-          ValueFromPipeline=$True)]
-        [string]$searchTerm,
-        [Parameter(Position=1,
-          Mandatory=$False,
-          ValueFromPipeline=$True)]
-        [int]$numberResults,
-        [Parameter(Position=2,
-          Mandatory=$False,
-          ValueFromPipeline=$True)]
-        [array]$searchResults
-      )
+function SearchContinue{
+	Param(
+		[Parameter(Position=0,
+		  Mandatory=$True,
+		  ValueFromPipeline=$True)]
+		[string]$searchTerm,
+		[Parameter(Position=1,
+		  Mandatory=$True,
+		  ValueFromPipeline=$True)]
+		[int]$numberSearchResultsRequested
+	)
 
-
-    # Get next set of links (usually 20, seems like it's always in 10s)
-    $moreLinks = (Invoke-WebRequest "https://www.bing.com/?q=$searchTerm").AllElements | Where-Object { $_.Class -eq "b_widePag sb_bp"} | Select-Object href
-    
-    # Clean link to next set of search result links
-    $linkNextCleaning = ($moreLinks -Split ";")[1,2]
-    $linkNext = "&"
-    $linkNext += ($moreLinks -Split ";")[1] -Replace "amp*"
-    $linkNext += ($moreLinks -Split ";")[2] -replace "}"
-
-    $moreResults = (Invoke-WebRequest $search$searchTerm$linkNext).Links.href -match "http" -notmatch "microsoft" -notmatch "bing"
-
-    if ($numberResults -le $moreResults.Length){  
-        $searchResults += $moreResults[0..$numberResults]
-        $searchResults
-    }
-    else {
-        $searchResults += $moreResults
-        $numberResults -= $moreResults.Length
-        $numberResults += 1
-        SearchRest $searchTerm $numberResults $searchResults $linkNext
-    }
+	if (-not $searchNext){
+		$searchNext = $searchPage2
+		Write-Host("4. Need $numberResultsRequested more results")
+		Search $searchTerm $numberSearchResultsRequested $searchNext
+	} elseif ($searchNext -eq $searchPage2) {
+		Write-Host("Search page 3")		
+	} else {
+		Write-Host("Search page above 3")
+	}	
 }
 
-function SearchRest{
-    Param(
-        [Parameter(Position=0,
-          Mandatory=$True,
-          ValueFromPipeline=$True)]
-        [string]$searchTerm,
-        [Parameter(Position=1,
-          Mandatory=$False,
-          ValueFromPipeline=$True)]
-        [int]$numberResults,
-        [Parameter(Position=2,
-          Mandatory=$False,
-          ValueFromPipeline=$True)]
-        [array]$searchResults,
-        [Parameter(Position=3,
-          Mandatory=$False,
-          ValueFromPipeline=$True)]
-        [array]$linkNext        
-      )
+# function SearchMore(){
+#     Param(
+#         [Parameter(Position=0,
+#           Mandatory=$True,
+#           ValueFromPipeline=$True)]
+#         [string]$searchTerm,
+#         [Parameter(Position=1,
+#           Mandatory=$False,
+#           ValueFromPipeline=$True)]
+#         [int]$numberResultsRequested
+# 	)
 
-      $lengthDEBUG = $searchResults.Length
-      Write-Host("$lengthDEBUG resultes so far, find $numberResults more. Current linkNext is $linkNext")
+# 	$numberResultsRequested += 1
 
-      while ($numberResults -gt 0){
-          # Iterate 1st int in first parameter, iterate int at end of search URL or add one if none there
+#     # Get URL for next set of search result URLs
+#     $moreLinks = (Invoke-WebRequest $search$searchTerm).AllElements | Where-Object { $_.Class -eq "b_widePag sb_bp"} | Select-Object href
+    
+#     # Clean URL for use in Invoke-WebRequest
+#     $linkNext = "&"
+#     $linkNext += ($moreLinks -Split ";")[1] -Replace "amp*"
+#     $linkNext += ($moreLinks -Split ";")[2] -replace "}"
 
-            # Increment first number
-            $linkNextBeginning = "&first="
+# 	$moreResults = (Invoke-WebRequest $search$searchTerm$linkNext).Links.href -match "http" -notmatch "microsoft" -notmatch "bing"
+# 	$moreResultsLength = $moreResults.Length
+# 	# $moreResultsLength = $moreResults.Length
+#     # if ($numberResultsRequested -le $moreResults.Length){  
+#     #     $searchResults += $moreResults[0..$numberResultsRequested]
+#     #     $searchResults
+#     # }
+#     # else {
+#     #     $searchResults += $moreResults
+#     #     $numberResultsRequested -= $moreResults.Length
+#     #     $numberResultsRequested += 1
+#     #     SearchRest $searchTerm $numberResultsRequested $searchResults $linkNext
+# 	# }
 
-            $linkNumbers = (($linkNext -split "&")[1]) -replace '\D+(\d+)','$1'
-            $linkNumbers.Substring(0, $linkNumbers.Length -1)
-            $linkNumbersInt = [int]$linkNumbers.Substring(0, $linkNumbers.Length -1)
+# 	# $searchResults += $moreResults
 
-            $linkNumbersInt++
-            $linkNumbers = $linkNumbersInt.ToString()
-            $linkNumbers += "1"
-            $linkNextBeginning += $linkNumbers
-            $linkNextBeginning += ($linkNext -Split "&")[-1]
-            $linkNext = $linkNextBeginning
+# 	# if ($moreResultsLength -lt $numberResultsRequested){
+#     #     $numberResultsRequested -= $moreResults.Length
+#     #     SearchMore $searchTerm $numberResultsRequested $searchResults
+# 	# }
+# 	# $searchResults = AppendResultsToSearchResults $moreResults $numberResultsRequested
 
-            Write-Host("Link next updated: $linkNext")
+# 	UpdateNumberResultsRequested $moreResultsLength $numberResultsRequested
+# }
 
-            # Increment final number or
-            if ($linkNext[-1][-1] -match "\d+"){       
-            Write-Host("End of URL a number")
-            $linkNext[-1][-1] ++          
-            # Concatenate number to end of link
-            } else {                
-            Write-Host("End of URL is not a number")                    
-                    $linkNext += "1"
-            }
+# function SearchRest{
+#     Param(
+#         [Parameter(Position=0,
+#           Mandatory=$True,
+#           ValueFromPipeline=$True)]
+#         [string]$searchTerm,
+#         [Parameter(Position=1,
+#           Mandatory=$False,
+#           ValueFromPipeline=$True)]
+#         [int]$numberResultsRequested,
+#         [Parameter(Position=2,
+#           Mandatory=$False,
+#           ValueFromPipeline=$True)]
+#         [array]$searchResults,
+#         [Parameter(Position=3,
+#           Mandatory=$False,
+#           ValueFromPipeline=$True)]
+#         [array]$linkNext        
+#       )
+
+#       $lengthDEBUG = $searchResults.Length
+
+#       while ($numberResultsRequested -gt 0){
+#           # Iterate 1st int in first parameter, iterate int at end of search URL or add one if none there
+
+#             # Increment first number
+#             $linkNextBeginning = "&first="
+
+#             $linkNumbers = (($linkNext -split "&")[1]) -replace '\D+(\d+)','$1'
+#             $linkNumbers.Substring(0, $linkNumbers.Length -1)
+#             $linkNumbersInt = [int]$linkNumbers.Substring(0, $linkNumbers.Length -1)
+
+#             $linkNumbersInt++
+#             $linkNumbers = $linkNumbersInt.ToString()
+#             $linkNumbers += "1"
+#             $linkNextBeginning += $linkNumbers
+#             $linkNextBeginning += ($linkNext -Split "&")[-1]
+#             $linkNext = $linkNextBeginning
+
+#             Write-Host("Link next updated: $linkNext")
+
+#             # Increment final number or
+#             if ($linkNext[-1][-1] -match "\d+"){       
+#             Write-Host("End of URL a number")
+#             $linkNext[-1][-1] ++          
+#             # Concatenate number to end of link
+#             } else {                
+#             Write-Host("End of URL is not a number")                    
+#                     $linkNext += "1"
+#             }
 
 
-            $linkNext.Replace(" ", "")  # NOT WORKING; SHOULD REMOVE ALL INSTANCES OF " " IN THE URL STRING          
+#             $linkNext.Replace(" ", "")  # NOT WORKING; SHOULD REMOVE ALL INSTANCES OF " " IN THE URL STRING          
 
-            $moreResults = (Invoke-WebRequest $search$searchTerm$linkNext).Links.href -match "http" -notmatch "microsoft" -notmatch "bing" 
+#             $moreResults = (Invoke-WebRequest $search$searchTerm$linkNext).Links.href -match "http" -notmatch "microsoft" -notmatch "bing" 
 
-            # If done
-            if (($numberResults -= $moreResults.Length) -le 0){
-                $searchResults += $moreResults[0..$numberResults]
-            }
-            else {
-                $searchResults += $moreResults
-                $numberResults -= $moreResults.Length
-            }
+#             # If done
+#             if (($numberResultsRequested -= $moreResults.Length) -le 0){
+#                 $searchResults += $moreResults[0..$numberResultsRequested]
+#             }
+#             else {
+#                 $searchResults += $moreResults
+#                 $numberResultsRequested -= $moreResults.Length
+#             }
 
-            $lengthDEBUG = $searchResults.Length
-            Write-Host("$lengthDEBUG resultes, find $numberResults more")
-            $searchResults
-      }
+#             $lengthDEBUG = $searchResults.Length
+#             Write-Host("$lengthDEBUG resultes, find $numberResultsRequested more")
+#             $searchResults
+#       }
+# }
+
+# Checks whether enough results returned. If so, display to user, else send to get more
+function TestEnoughResults{
+	Param(
+		[Parameter(Position=0,
+		Mandatory=$False,
+		ValueFromPipeline=$True)]
+		[int]$numberResultsRequested
+	)
+
+	if ($numberResultsRequested -le 0){
+		return $TRUE
+	}
+	else{
+		return $FALSE
+	}
+}
+
+# Display searh results to user
+function DisplayResults{
+	Param(
+		[Parameter(Position=0,
+		Mandatory=$True,
+		ValueFromPipeline=$True)]
+		[array]$moreResults
+	)
+
+	$searchResultsLength = $searchResults.Length
+	$moreResults
+}
+
+# Adjust numberMoreResults to match amount still required by user 
+function TailorNumberMoreResults{
+	Param(
+		[Parameter(Position=0,
+		Mandatory=$True,
+		ValueFromPipeline=$True)]
+		[array]$moreResults,
+		[Parameter(Position=1,
+		Mandatory=$True,
+		ValueFromPipeline=$True)]
+		[int]$numberResultsRequested
+	)
+
+	if ($numberResultsRequested -le $moreResults.Length){  
+		return $moreResults[0..($numberResultsRequested - 1)]
+	}
+
+	return $moreResults
+}
+
+function UpdateNumberResultsRequested(){
+	Param(
+		[Parameter(Position=0,
+		Mandatory=$True,
+		ValueFromPipeline=$True)]
+		[int]$moreResultsLength,
+		[Parameter(Position=1,
+		Mandatory=$True,
+		ValueFromPipeline=$True)]
+		[int]$numberResultsRequested
+	)
+
+	Write-Host("$moreResultsLength results so far of $numberResultsRequested")
+
+	$numberResultsRequested -= $moreResultsLength
+
+	Write-Host("$numberResultsRequested results still requested")
+	return $numberResultsRequested
 }
