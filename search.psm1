@@ -9,6 +9,7 @@ $searchNext = ""
 $searchPage2 = "&first=11&FORM=PERE"
 $searchPage3 = "&first=21&FORM=PERE1"
 $searchResults = @()
+# $numberResultsRequested
 
 # Progress information
 $percentComplete = 0
@@ -62,6 +63,7 @@ function SearchLoop{
 	
 	$resultsUpdated = TailorNumberMoreResults $moreResults $numberResultsRequested
 	if ($resultsUpdated.Length -gt 0){
+		$searchResults = $searchResults | Select-Object -Unique
 		$searchResultsUpdated = TailorNumberMoreResults $moreResults $numberResultsRequested
 	}
 	else {
