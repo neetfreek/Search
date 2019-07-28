@@ -25,21 +25,14 @@ Param(
 	$numberResultsRequested = $numberSearchResultsRequested
 	
 	$moreResults = (Invoke-WebRequest $search$searchTerm$searchNext).Links.href -match "http" -notmatch "microsoft" -notmatch "bing"
-	$moreResultsLength = $moreResults.Length
-
-	Write-Host("1. Found $moreResultsLength results of $numberResultsRequested")
-
-
+	
 	$searchResultsUpdated = TailorNumberMoreResults $moreResults $numberResultsRequested
 	$searchResultsUpdatedLength = $searchResultsUpdated.Length
 	$numberResultsRequested -= $searchResultsUpdatedLength
 
-	Write-Host("2. Search results updated to $searchResultsUpdatedLength results of $numberResultsRequested ")
-
 	$searchResults = $searchResults + $searchResultsUpdated
 
 	if (-not (TestEnoughResults $numberResultsRequested)){
-		Write-Host("3. Need $numberResultsRequested more results")
 		SearchContinue $searchTerm $numberResultsRequested
 	}
 	else {
@@ -66,11 +59,9 @@ function SearchContinue{
 	} elseif ($searchNext -eq $searchPage2) {
 		$searchNext = $searchPage3
 	} else {
-		Write-Host("!!!!!!!!!!!!!!!!searchNext: $searchNext")
 		$searchNextOld = $searchNext
 		$searchNextUpdated = ""
 		[string]$searchNextUpdated = IncrementNextPageURL $searchNextOld		
-		Write-Host("SearchNextUpdated is $searchNextUpdated, page above 3 from URL $searchNext")
 		$searchNext = ""
 		$searchNext = $searchNextUpdated
 	}
@@ -87,7 +78,7 @@ function IncrementNextPageURL(){
         [string]$linkNext        
 		)
 	  
-		Write-Host("`n`nINCREMENTING URL $linkNext")
+		# Write-Host("`n`nINCREMENTING URL $linkNext")
 
 		# Increment first number
 		$linkNextBeginning = "&first="
@@ -103,12 +94,10 @@ function IncrementNextPageURL(){
 		$linkNextBeginning += ("&" + ($linkNext -Split "&")[-1])
 		$linkNext = $linkNextBeginning
 
-		Write-Host("A. Front number done; linkNext: $linkNext")
+		# Write-Host("A. Front number done; linkNext: $linkNext")
 
 		# Increment final number
 		$linkNextSplit = $linkNext -Split "PERE"
-		$linkNumbersBack = $linkNextSplit[-1]
-		Write-Host("B. Last number (=-seperated): $linkNumbersBack")
 		$linkNumbers = [int]($linkNextSplit[-1])
 		$linkNumbers++
 		$linkNumbers = $linkNumbers.ToString()
@@ -117,9 +106,8 @@ function IncrementNextPageURL(){
 		$linkFinal += ("PERE" + $linkNumbers)
 		
 		$linkFinal.Replace(" ", "")  # NOT WORKING; SHOULD REMOVE ALL INSTANCES OF " " IN THE URL STRING          
-		Write-Host("C. linkFinal: $linkFinal")		
 
-		Write-Host("`n`nRETURNING $linkFinal")
+		# Write-Host("`n`nRETURNING $linkFinal")
 }
 
 # Checks whether enough results returned. If so, display to user, else send to get more
@@ -170,24 +158,4 @@ function TailorNumberMoreResults{
 	}
 
 	return $moreResults
-}
-
-function UpdateNumberResultsRequested(){
-	Param(
-		[Parameter(Position=0,
-		Mandatory=$True,
-		ValueFromPipeline=$True)]
-		[int]$moreResultsLength,
-		[Parameter(Position=1,
-		Mandatory=$True,
-		ValueFromPipeline=$True)]
-		[int]$numberResultsRequested
-	)
-
-	Write-Host("$moreResultsLength results so far of $numberResultsRequested")
-
-	$numberResultsRequested -= $moreResultsLength
-
-	Write-Host("$numberResultsRequested results still requested")
-	return $numberResultsRequested
 }
