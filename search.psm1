@@ -68,6 +68,7 @@ function SearchContinue{
 	} else {
 		Write-Host("!!!!!!!!!!!!!!!!searchNext: $searchNext")
 		$searchNextOld = $searchNext
+		$searchNextUpdated = ""
 		[string]$searchNextUpdated = IncrementNextPageURL $searchNextOld		
 		Write-Host("SearchNextUpdated is $searchNextUpdated, page above 3 from URL $searchNext")
 		$searchNext = ""
@@ -102,19 +103,23 @@ function IncrementNextPageURL(){
 		$linkNextBeginning += ("&" + ($linkNext -Split "&")[-1])
 		$linkNext = $linkNextBeginning
 
+		Write-Host("A. Front number done; linkNext: $linkNext")
+
 		# Increment final number
 		$linkNextSplit = $linkNext -Split "PERE"
+		$linkNumbersBack = $linkNextSplit[-1]
+		Write-Host("B. Last number (=-seperated): $linkNumbersBack")
 		$linkNumbers = [int]($linkNextSplit[-1])
 		$linkNumbers++
 		$linkNumbers = $linkNumbers.ToString()
 
 		$linkFinal = $linkNextSplit[0]
-		$linkFinal += $linkNumbers  
+		$linkFinal += ("PERE" + $linkNumbers)
 		
 		$linkFinal.Replace(" ", "")  # NOT WORKING; SHOULD REMOVE ALL INSTANCES OF " " IN THE URL STRING          
-		
+		Write-Host("C. linkFinal: $linkFinal")		
+
 		Write-Host("`n`nRETURNING $linkFinal")
-		return $linkFinal
 }
 
 # Checks whether enough results returned. If so, display to user, else send to get more
