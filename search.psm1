@@ -44,15 +44,15 @@ function SearchLoop{
 	Param(
     [Parameter(Position=0,
       Mandatory=$True,
-      ValueFromPipeline=$True)]
+      ValueFromPipeline=$False)]
     [string]$searchTerm,
     [Parameter(Position=1,
       Mandatory=$True,
-      ValueFromPipeline=$True)]
+      ValueFromPipeline=$False)]
 	[int]$numberResultsRequested,
 	[Parameter(Position=2,
 	Mandatory=$False,
-	ValueFromPipeline=$True)]
+	ValueFromPipeline=$False)]
 	[string]$searchNext
 	)
 	
@@ -89,11 +89,11 @@ function SearchContinue{
 	Param(
 		[Parameter(Position=0,
 		  Mandatory=$True,
-		  ValueFromPipeline=$True)]
+		  ValueFromPipeline=$False)]
 		[string]$searchTerm,
 		[Parameter(Position=1,
 		  Mandatory=$True,
-		  ValueFromPipeline=$True)]
+		  ValueFromPipeline=$False)]
 		[int]$numberSearchResultsRequested
 	)
 
@@ -118,7 +118,7 @@ function IncrementNextPageURL(){
 	    Param(
         [Parameter(Position=0,
           Mandatory=$False,
-          ValueFromPipeline=$True)]
+          ValueFromPipeline=$False)]
         [string]$linkNext        
 		)
 	  
@@ -154,7 +154,7 @@ function TestEnoughResults{
 	Param(
 		[Parameter(Position=0,
 		Mandatory=$False,
-		ValueFromPipeline=$True)]
+		ValueFromPipeline=$False)]
 		[int]$numberResultsRequested
 	)
 
@@ -172,11 +172,11 @@ function DisplayResults{
 	Param(
 		[Parameter(Position=0,
 		Mandatory=$True,
-		ValueFromPipeline=$True)]
-		[array]$moreResults
+		ValueFromPipeline=$False)]
+		[array]$results
 	)
-	$moreResults
 	PrependURLNumbers $results
+	$results
 }
 
 
@@ -185,12 +185,12 @@ function TailorNumberMoreResults{
 	Param(
 		[Parameter(Position=0,
 		Mandatory=$True,
-		ValueFromPipeline=$True)]
+		ValueFromPipeline=$False)]
 		[AllowEmptyCollection()]
 		[array]$moreResults,
 		[Parameter(Position=1,
 		Mandatory=$True,
-		ValueFromPipeline=$True)]
+		ValueFromPipeline=$False)]
 		[int]$numberResultsRequested
 	)
 
