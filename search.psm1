@@ -5,7 +5,11 @@ $searchPage2 = "&first=11&FORM=PERE"
 $searchPage3 = "&first=21&FORM=PERE1"
 $searchResults = @()
 
+# Progress information
+$percentComplete = 0
+$resultsRequested = 0
 
+# Entry point
 function Search(){
 Param(
     [Parameter(Position=0,
@@ -15,15 +19,37 @@ Param(
     [Parameter(Position=1,
       Mandatory=$True,
       ValueFromPipeline=$True)]
-	[int]$numberSearchResultsRequested,
+	[int]$numberResultsRequested,
 	[Parameter(Position=2,
 	Mandatory=$False,
 	ValueFromPipeline=$True)]
 	[string]$searchNext
 	)
-			
-	$numberResultsRequested = $numberSearchResultsRequested
 	
+	$resultsRequested = $numberResultsRequested
+
+	SearchLoop $searchTerm $numberResultsRequested $searchNext
+}
+
+
+function SearchLoop{
+	Param(
+    [Parameter(Position=0,
+      Mandatory=$True,
+      ValueFromPipeline=$True)]
+    [string]$searchTerm,
+    [Parameter(Position=1,
+      Mandatory=$True,
+      ValueFromPipeline=$True)]
+	[int]$numberResultsRequested,
+	[Parameter(Position=2,
+	Mandatory=$False,
+	ValueFromPipeline=$True)]
+	[string]$searchNext
+	)
+	
+	UpdateProgress $numberResultsRequested
+
 	$moreResults = (Invoke-WebRequest $search$searchTerm$searchNext).Links.href -match "http" -notmatch "microsoft" -notmatch "bing"
 	
 	$searchResultsUpdated = TailorNumberMoreResults $moreResults $numberResultsRequested
@@ -66,7 +92,7 @@ function SearchContinue{
 		$searchNext = $searchNextUpdated
 	}
 
-	Search $searchTerm $numberSearchResultsRequested $searchNext
+	SearchLoop $searchTerm $numberSearchResultsRequested $searchNext
 }
 
 
@@ -78,8 +104,6 @@ function IncrementNextPageURL(){
         [string]$linkNext        
 		)
 	  
-		# Write-Host("`n`nINCREMENTING URL $linkNext")
-
 		# Increment first number
 		$linkNextBeginning = "&first="
 
@@ -94,8 +118,6 @@ function IncrementNextPageURL(){
 		$linkNextBeginning += ("&" + ($linkNext -Split "&")[-1])
 		$linkNext = $linkNextBeginning
 
-		# Write-Host("A. Front number done; linkNext: $linkNext")
-
 		# Increment final number
 		$linkNextSplit = $linkNext -Split "PERE"
 		$linkNumbers = [int]($linkNextSplit[-1])
@@ -106,8 +128,6 @@ function IncrementNextPageURL(){
 		$linkFinal += ("PERE" + $linkNumbers)
 		
 		$linkFinal.Replace(" ", "")  # NOT WORKING; SHOULD REMOVE ALL INSTANCES OF " " IN THE URL STRING          
-
-		# Write-Host("`n`nRETURNING $linkFinal")
 }
 
 # Checks whether enough results returned. If so, display to user, else send to get more
@@ -158,4 +178,11 @@ function TailorNumberMoreResults{
 	}
 
 	return $moreResults
+}
+
+function UpdateProgress{
+
+	$percentComplete = ($searchResults.Length / $resultsRequested)  * 100
+
+	Write-Progress -Activity "Getting Search Result Links..." -Status "$percentComplete Complete:" -PercentComplete $percentComplete 
 }
