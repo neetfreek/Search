@@ -176,6 +176,7 @@ function DisplayResults{
 		[array]$moreResults
 	)
 	$moreResults
+	PrependURLNumbers $results
 }
 
 
@@ -207,4 +208,26 @@ function UpdateProgress{
 	$percentComplete = ($searchResults.Length / $resultsRequested)  * 100
 
 	Write-Progress -Activity "Getting Search Result Links..." -Status "$percentComplete Complete:" -PercentComplete $percentComplete 
+}
+
+
+# Prepend search result URLs with index number
+function PrependURLNumbers(){
+	Param(
+	[Parameter(Position=0,
+	Mandatory=$True,
+	ValueFromPipeline=$False)]
+	[AllowEmptyCollection()]
+	[array]$searchResults
+	)
+
+	[string]$indexString = "0"
+	[int]$indexInt = 0
+
+	for($counter = 0; $counter -lt $searchResults.Length; $counter++){
+		$indexInt = $counter
+		$indexString = $indexInt.ToString()
+		$indexString = "[$indexString] "
+		$searchResults[$counter] = $indexString + $searchResults[$counter]
+	}
 }
