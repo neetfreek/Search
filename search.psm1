@@ -27,6 +27,7 @@ Param(
 	)
 	
 	$resultsRequested = $numberResultsRequested
+	$searchTerm = $searchTerm.Replace(" ", "+")
 
 	SearchLoop $searchTerm $numberResultsRequested $searchNext
 }
