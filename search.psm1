@@ -53,7 +53,15 @@ function SearchLoop{
 
 	$moreResults = (Invoke-WebRequest $search$searchTerm$searchNext).Links.href -match "http" -notmatch "microsoft" -notmatch "bing"
 	
-	$searchResultsUpdated = TailorNumberMoreResults $moreResults $numberResultsRequested
+	$resultsUpdated = TailorNumberMoreResults $moreResults $numberResultsRequested
+	if ($resultsUpdated.Length -gt 0){
+		$searchResultsUpdated = TailorNumberMoreResults $moreResults $numberResultsRequested
+	}
+	else {
+		DisplayResults $searchResults
+		Write-Host("***Search complete***")
+		break;
+	}
 	$searchResultsUpdatedLength = $searchResultsUpdated.Length
 	$numberResultsRequested -= $searchResultsUpdatedLength
 
