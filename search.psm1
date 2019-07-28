@@ -1,8 +1,3 @@
-<#***************************************************************
-*  Return array of search result URLs to user from Bing search  *
-****************************************************************#>
-
-
 # Bing search URLs
 $search = "https://www.bing.com/?q="
 $searchNext = ""
@@ -16,7 +11,32 @@ $percentComplete = 0
 $resultsRequested = 0
 
 
-# Entry point
+<#
+.Synopsis
+PowerShell script for returning as many Bing search result URLs as you like.
+
+.Description
+The script returns an array containing search result URLs for your search terms.
+Enter your search keyword(s) followed by the number of results you would like. As many results as can be found will be returned.
+By assigning the return value to a variable, you can continue working with the links after the search is complete.
+
+.Outputs
+System.Array.Object[]
+	Collection of search results
+
+.Example
+search dogs 10
+This example returns 10 result URLs for the search term "dog" and displays the resulting URLs to the user.
+.Example
+$results = search "chocolate cake" 80
+This example returns 80 result URLs for the search term "chocolate cake" and assigns the returned value to the "$results" variable.
+
+.Notes
+This script is still in development, and is a learning experience for myself. It may not be very efficient - or reliable - but I'm working on it :)
+
+.LINK
+http://neetfreek.net
+#>
 function Search(){
 Param(
     [Parameter(Position=0,
@@ -26,17 +46,13 @@ Param(
     [Parameter(Position=1,
       Mandatory=$True,
       ValueFromPipeline=$True)]
-	[int]$numberResultsRequested,
-	[Parameter(Position=2,
-	Mandatory=$False,
-	ValueFromPipeline=$True)]
-	[string]$searchNext
+	[int]$numberResultsRequested
 	)
 	
 	$resultsRequested = $numberResultsRequested
 	$searchTerm = $searchTerm.Replace(" ", "+")
 
-	SearchLoop $searchTerm $numberResultsRequested $searchNext
+	SearchLoop $searchTerm $numberResultsRequested
 }
 
 
