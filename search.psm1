@@ -1,3 +1,8 @@
+<#***************************************************************
+*  Return array of search result URLs to user from Bing search  *
+****************************************************************#>
+
+
 # Bing search URLs
 $search = "https://www.bing.com/?q="
 $searchNext = ""
@@ -8,6 +13,7 @@ $searchResults = @()
 # Progress information
 $percentComplete = 0
 $resultsRequested = 0
+
 
 # Entry point
 function Search(){
@@ -33,6 +39,7 @@ Param(
 }
 
 
+# Get, add search result URLs to $searchResults
 function SearchLoop{
 	Param(
     [Parameter(Position=0,
@@ -77,6 +84,7 @@ function SearchLoop{
 }
 
 
+# Set appropriate search result page URL suffix
 function SearchContinue{
 	Param(
 		[Parameter(Position=0,
@@ -105,6 +113,7 @@ function SearchContinue{
 }
 
 
+# Increment search result page URL
 function IncrementNextPageURL(){
 	    Param(
         [Parameter(Position=0,
@@ -136,10 +145,11 @@ function IncrementNextPageURL(){
 		$linkFinal = $linkNextSplit[0]
 		$linkFinal += ("PERE" + $linkNumbers)
 		
-		$linkFinal.Replace(" ", "")  # NOT WORKING; SHOULD REMOVE ALL INSTANCES OF " " IN THE URL STRING          
+		$linkFinal.Replace(" ", "")  
 }
 
-# Checks whether enough results returned. If so, display to user, else send to get more
+
+# Check whether enough results returned. If so, display to user, else send to get more
 function TestEnoughResults{
 	Param(
 		[Parameter(Position=0,
@@ -169,12 +179,13 @@ function DisplayResults{
 }
 
 
-# Adjust numberMoreResults to match amount still required by user 
+# Adjust numberMoreResults to match amount still required by user
 function TailorNumberMoreResults{
 	Param(
 		[Parameter(Position=0,
 		Mandatory=$True,
 		ValueFromPipeline=$True)]
+		[AllowEmptyCollection()]
 		[array]$moreResults,
 		[Parameter(Position=1,
 		Mandatory=$True,
@@ -189,6 +200,8 @@ function TailorNumberMoreResults{
 	return $moreResults
 }
 
+
+# Display progress bar to user
 function UpdateProgress{
 
 	$percentComplete = ($searchResults.Length / $resultsRequested)  * 100
