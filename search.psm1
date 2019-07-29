@@ -44,11 +44,15 @@ Param(
       ValueFromPipeline=$True)]
     [string]$searchTerm,
     [Parameter(Position=1,
-      Mandatory=$True,
+      Mandatory=$False,
       ValueFromPipeline=$True)]
 	[int]$numberResultsRequested
 	)
-	
+		
+	if ($numberResultsRequested -le 0){
+		$numberResultsRequested = 20
+	}
+
 	$resultsRequested = $numberResultsRequested
 	$searchTerm = $searchTerm.Replace(" ", "+")
 
