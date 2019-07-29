@@ -79,8 +79,8 @@ function SearchLoop{
 	
 	$resultsUpdated = TailorNumberMoreResults $moreResults $numberResultsRequested
 	if ($resultsUpdated.Length -gt 0){
-		$searchResults = $searchResults | Select-Object -Unique
-		$searchResultsUpdated = TailorNumberMoreResults $moreResults $numberResultsRequested
+		$searchResultsUpdated = $resultsUpdated | Select-Object -Unique
+		$searchResultsUpdated = TailorNumberMoreResults $resultsUpdated $numberResultsRequested
 	}
 	else {
 		DisplayResults $searchResults
