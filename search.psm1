@@ -13,12 +13,14 @@ $resultsRequested = 0
 
 <#
 .Synopsis
-PowerShell script for returning as many Bing search result URLs as you like.
+Search returns as many Bing search result URLs as you like.
+Navigate allows for easily accessing and viewing results returned by Search.
 
 .Description
 The script returns an array containing search result URLs for your search terms.
 Enter your search keyword(s) followed by the number of results you would like. As many results as can be found will be returned.
 By assigning the return value to a variable, you can continue working with the links after the search is complete.
+Navigate allows you to accessing and view search results in your collection variable.
 
 .Outputs
 System.Array.Object[]
@@ -28,8 +30,12 @@ System.Array.Object[]
 search dogs 10
 This example returns 10 result URLs for the search term "dog" and displays the resulting URLs to the user.
 .Example
-$results = search "chocolate cake" 80
-This example returns 80 result URLs for the search term "chocolate cake" and assigns the returned value to the "$results" variable.
+1. $results = search "chocolate cake" 80
+2. $results
+3. navigate $results[3]
+Step 1. returns 80 result URLs for the search term "chocolate cake" and assigns the returned value to the "$results" variable.
+Step 2. displays the contents of the URL collection assigned to the "$results" variable
+Step 3. displays the fourth result's body's innerText elements
 
 .Notes
 This script is still in development, and is a learning experience for myself. It may not be very efficient - or reliable - but I'm working on it :)
