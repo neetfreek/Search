@@ -1,3 +1,5 @@
+$page = ""
+
 <#
 .Synopsis
 This module allows you to easily browse the contents - text in paragraphs or links - of web pages.
@@ -37,13 +39,20 @@ function Navigate{
 	  [string]$viewContent
 	)
 
-	
+
 	if (IsSearchObject $searchURL){
 		$navigationURL = RemoveIndex $searchURL
+		if (IsInternalLink $searchURL){
+			$navigationURL = $page + $searchURL
+		}
+	}
+	elseif (IsInternalLink $searchURL){
+		$navigationURL = $page + $searchURL
 	}
 	else {
 		$navigationURL = $searchURL
 	}
+
 	$page = (Invoke-WebRequest $navigationURL)
 
 	switch ($viewContent){
@@ -77,6 +86,7 @@ function DisplayBodyInnerText{
 		[array]$page
 	)
 
+	Write-Host("***Paragraph content:`n`n***")		
 	$pageP = foreach ($element in $page.ParsedHtml.body.getElementsByTagName("p"))
 		{
 			$element.innerText
@@ -85,6 +95,8 @@ function DisplayBodyInnerText{
 	foreach ($para in $pageP){
 		$para + "`n"
 	}
+
+	return $pageP
 }
 
 
@@ -97,9 +109,10 @@ function DisplayLinks{
 		[array]$page
 	)
 
+	Write-Host("***Links:***`n`n")		
 	$links = $page.Links.href
 
-	$links
+	return $links
 }
 
 
@@ -112,6 +125,22 @@ function IsSearchObject{
 		[string]$navigationURL
 	)
 	if ($navigationURL[0] -eq "["){
+		return $true
+	}
+
+	return $false
+}
+
+
+# Return true/false if provided URL for navigate() is/n't an internal link beginning with "/"
+function IsInternalLink{
+	Param(
+		[Parameter(Position=0,
+		  Mandatory=$True,
+		  ValueFromPipeline=$False)]
+		[string]$navigationURL
+	)
+	if ($navigationURL[0] -eq "/"){
 		return $true
 	}
 
