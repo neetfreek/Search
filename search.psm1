@@ -14,7 +14,7 @@ $resultsRequested = 0
 <#
 .Synopsis
 This module returns as many Bing search result URLs as you like.
-The companion module [navigate] allows you to accessing and view search results in your collection variable. For more, please see Get-Help navigate.
+The companion module [navigate] allows you to access and view search result objects in your assigned search collection variable. For more, please see Get-Help navigate.
 
 .Description
 This module returns an array containing search result URLs for your search terms.
