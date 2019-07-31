@@ -93,12 +93,12 @@ function SearchLoop{
 		$searchResultsUpdated = TailorNumberMoreResults $resultsUpdated $numberResultsRequested
 	}
 	elseif ($searchResults.Length -eq 0 -or !$searchResults){
-		Write-Host("***No results for $searchTerm found***")
+		Write-Host("***No results for $searchTerm found***`n`n")
 		break
 	}
 	else {
 		DisplayResults $searchResults
-		Write-Host("***$searchTerm results:***")		
+		Write-Host("***$searchTerm results:***`n`n")		
 		break
 	}
 	$searchResultsUpdatedLength = $searchResultsUpdated.Length
