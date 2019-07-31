@@ -13,22 +13,22 @@ $resultsRequested = 0
 
 <#
 .Synopsis
-Search returns as many Bing search result URLs as you like.
-Navigate allows for easily accessing and viewing results returned by Search.
+This module returns as many Bing search result URLs as you like.
+The companion module [navigate] allows you to accessing and view search results in your collection variable. For more, please see Get-Help navigate.
 
 .Description
-The script returns an array containing search result URLs for your search terms.
-Enter your search keyword(s) followed by the number of results you would like. As many results as can be found will be returned.
+This module returns an array containing search result URLs for your search terms.
+This module accepts your search term as a string parameter followed by an integer parameter representing the number of results you would like.
+Up to as many results as can be found will be returned.
 By assigning the return value to a variable, you can continue working with the links after the search is complete.
-Navigate allows you to accessing and view search results in your collection variable.
 
 .Outputs
 System.Array.Object[]
 	Collection of search results
 
 .Example
-search dogs 10
-This example returns 10 result URLs for the search term "dog" and displays the resulting URLs to the user.
+1. search dogs
+This example returns 20 (default number) result URLs for the search term "dog" and displays the resulting URLs to the user.
 .Example
 1. $results = search "chocolate cake" 80
 2. $results
