@@ -208,7 +208,6 @@ function DisplayResults{
 		[array]$results
 	)
 	PrependURLNumbers $results
-	$results
 }
 
 
@@ -262,4 +261,6 @@ function PrependURLNumbers(){
 		$indexString = "[$indexString] "
 		$searchResults[$counter] = $indexString + $searchResults[$counter]
 	}
+
+	return $searchResults
 }
