@@ -31,13 +31,25 @@ function RemoveIndex(){
 	return $splitURL[1]
 }
 
+
 # Display body of URL
 function DisplayBodyInnerText{
 	Param(
 		[Parameter(Position=0,
 		  Mandatory=$True,
 		  ValueFromPipeline=$False)]
-		[string]$searchURL
+		[array]$page
+	)
+
+	$pageP = foreach ($element in $page.ParsedHtml.body.getElementsByTagName("p"))
+		{
+			$element.innerText
+		}
+
+	foreach ($para in $pageP){
+		$para + "`n"
+	}
+}
 	)
 	(Invoke-WebRequest $searchURL).ParsedHTML.body.innerText
 # Return true/false if provided URL for navigate() is/n't an object from search() array collection
