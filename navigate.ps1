@@ -1,3 +1,30 @@
+<#
+.Synopsis
+This module allows you to easily browse the contents - text in paragraphs or links - of web pages.
+The companion module [search], allows you to find web pages online which can be used with this module. For more, please see Get-Help search.
+
+.Description
+This module returns an array containing your page view queries.
+This module accepts both objects from search return value arrays as well as URLs as parameters and a second optional string parameter which
+allows control for having either the paragraph (default) or link contents returned (using either "page" or "links").
+
+.Outputs
+System.Array.Object[]
+	Collection of search results
+
+.Example
+1. navigate https://www.neetfreek.net
+This example displays the paragraph contents of the URL (default behaviour).
+.Example
+1. navigate $results[0] -viewContent "links"
+This example displays the link contents of a page (object in an array) returned by an earlier search module query
+
+.Notes
+This script is still in development, and is a learning experience for myself. It may not be very efficient - or reliable - but I'm working on it :)
+
+.LINK
+http://neetfreek.net
+#>
 function Navigate{
 	Param(
 		[Parameter(Position=0,
