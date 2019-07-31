@@ -1,3 +1,5 @@
+& ".\search.psm1"
+
 $page = ""
 
 <#
@@ -39,17 +41,21 @@ function Navigate{
 	  [string]$viewContent
 	)
 
+	$impureURL= $false
 
 	if (IsSearchObject $searchURL){
 		$navigationURL = RemoveIndex $searchURL
-		if (IsInternalLink $searchURL){
+		if (IsInternalLink $navigationURL){
+			Write-Host("1 Detected internal link; must prepend $page (should see domain here)") # MAKE PAGE PERSIST FROM LAST NAVIGATION
 			$navigationURL = $page + $searchURL
 		}
+		$impureURL = $true
 	}
-	elseif (IsInternalLink $searchURL){
+	if (IsInternalLink $searchURL){
 		$navigationURL = $page + $searchURL
+		$impureURL = $true
 	}
-	else {
+	if (!$impureURL) {
 		$navigationURL = $searchURL
 	}
 
@@ -73,7 +79,8 @@ function RemoveIndex(){
 	)
 
 	$splitURL = $searchURL -Split "]"
-	return $splitURL[1]
+	$URLCleanded = $splitURL[1].Trim()
+	return $URLCleanded
 }
 
 
@@ -86,7 +93,6 @@ function DisplayBodyInnerText{
 		[array]$page
 	)
 
-	Write-Host("***Paragraph content:`n`n***")		
 	$pageP = foreach ($element in $page.ParsedHtml.body.getElementsByTagName("p"))
 		{
 			$element.innerText
@@ -109,8 +115,8 @@ function DisplayLinks{
 		[array]$page
 	)
 
-	Write-Host("***Links:***`n`n")		
 	$links = $page.Links.href
+	$links = PrependURLNumbers $links	
 
 	return $links
 }
