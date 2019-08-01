@@ -18,8 +18,15 @@ System.Array.Object[]
 1. navigate https://www.neetfreek.net
 This example displays the paragraph contents of the URL (default behaviour).
 .Example
-1. navigate $results[0] -viewContent "links"
-This example displays the link contents of a page (object in an array) returned by an earlier search module query
+1. $pages = search neetfreek
+2. $pages
+3. navigate $pages[0]
+4. $links = navigate $pages[0] -getContent "links"
+5. $links
+6. navigate $links[2]
+This example (1.) returns and assigns 20 (default amount) search results in the $pages collection variable before (2.) displaying the contents of the collection. 
+It then (3.) displays the paragraph content of the first page returned by the search before (4.) assigning all links of that page into the $links collection variable.
+It then (5.) displays the contents of the collection, before finally (6.) displaying the paragraph content of the third link.
 
 .Notes
 This script is still in development, and is a learning experience for myself. It may not be very efficient - or reliable - but I'm working on it :)
