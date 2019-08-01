@@ -1,4 +1,4 @@
-& ".\search.psm1"
+& ".\search.ps1"
 
 $page = ""
 

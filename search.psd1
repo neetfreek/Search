@@ -1,7 +1,7 @@
 @{
     ModuleVersion = "1.0"
     NestedModules = @(
-        "search.psm1",
+        "search.ps1",
         "navigate.ps1"
         )
 
