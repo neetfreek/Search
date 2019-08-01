@@ -98,7 +98,6 @@ function SearchLoop{
 	}
 	else {
 		DisplayResults $searchResults
-		Write-Host("***$searchTerm results:***`n`n")		
 		break
 	}
 	$searchResultsUpdatedLength = $searchResultsUpdated.Length
