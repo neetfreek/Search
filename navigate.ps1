@@ -36,7 +36,7 @@ function Navigate{
 		[Parameter(Position=1,
 		Mandatory=$False,
 		ValueFromPipeline=$False)]
-	  [string]$viewContent
+	  [string]$getContent
 	)
 
 	$impureURL= $false
@@ -51,7 +51,7 @@ function Navigate{
 
 	$page = (Invoke-WebRequest $navigationURL)
 
-	switch ($viewContent){
+	switch ($getContent){
 		"" {DisplayBodyInnerText $page}
 		"links" {DisplayLinks $page $navigationURL}
 		"page" {DisplayBodyInnerText $page}
