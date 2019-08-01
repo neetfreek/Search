@@ -43,14 +43,6 @@ function Navigate{
 
 	if (IsSearchObject $searchURL){
 		$navigationURL = RemoveIndex $searchURL
-		if (IsInternalLink $navigationURL){
-			Write-Host("1 Detected internal link; must prepend $page (should see domain here)") # MAKE PAGE PERSIST FROM LAST NAVIGATION
-			$navigationURL = $page + $searchURL
-		}
-		$impureURL = $true
-	}
-	if (IsInternalLink $searchURL){
-		$navigationURL = $page + $searchURL
 		$impureURL = $true
 	}
 	if (!$impureURL) {
@@ -61,7 +53,7 @@ function Navigate{
 
 	switch ($viewContent){
 		"" {DisplayBodyInnerText $page}
-		"links" {DisplayLinks $page}
+		"links" {DisplayLinks $page $navigationURL}
 		"page" {DisplayBodyInnerText $page}
 	}	
 }
@@ -110,12 +102,16 @@ function DisplayLinks{
 		[Parameter(Position=0,
 		  Mandatory=$True,
 		  ValueFromPipeline=$False)]
-		[array]$page
+		[array]$page,
+		[Parameter(Position=1,
+		Mandatory=$False,
+		ValueFromPipeline=$False)]
+	  [string]$navigationURL
 	)
 
 	$links = $page.Links.href
+	$links = AppendDomainToInternalLinks $links $navigationURL
 	$links = PrependURLNumbers $links	
-
 	return $links
 }
 
@@ -149,4 +145,29 @@ function IsInternalLink{
 	}
 
 	return $false
+}
+
+
+function AppendDomainToInternalLinks{
+	Param(
+		[Parameter(Position=0,
+		  Mandatory=$True,
+		  ValueFromPipeline=$False)]
+		[array]$URLCollection,
+		[Parameter(Position=1,
+		Mandatory=$True,
+		ValueFromPipeline=$False)]
+	  [string]$navigationURL
+	)
+
+	$linksUpdate = New-Object System.Collections.ArrayList
+
+	foreach ($URL in $URLCollection){
+		if (IsInternalLink $URL){
+			$URL = $navigationURL + $URL
+		}
+		$linksUpdate += $URL
+	}
+
+	return $linksUpdate
 }
