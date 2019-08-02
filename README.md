@@ -1,8 +1,8 @@
 # PowerShell Search and Navigate Module
 This module provides basic search engine and website navigation capabilities within Microsoft PowerShell - removing the need to use a browser.
 
-<img src="/images/Example1.png" alt="example 1" align="left" width="432">
-<img src="/images/Example2.png" alt="example 2" align="right" width="432">
+<img src="/images/Example1.png" alt="example 1" align="left" width="410">
+<img src="/images/Example2.png" alt="example 2" align="right" width="410">
 
 ## Setup
 Clone this repository anywhere on your machine, launch PowerShell and use the `Install-Module` cmdlet to install both `search` and navigate:  
