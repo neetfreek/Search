@@ -110,7 +110,6 @@ function SearchLoop{
 	}
 	else {
 		DisplayResults $searchResults
-		Write-Host("***Search complete***")
 	}
 }
 
