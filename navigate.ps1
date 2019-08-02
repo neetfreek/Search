@@ -56,7 +56,11 @@ function Navigate{
 		$navigationURL = $searchURL
 	}
 
-	$page = (Invoke-WebRequest $navigationURL)
+	try {$page = (Invoke-WebRequest $navigationURL)}
+	catch{
+		Write-Host "Requested URL `"$navigationURL`" did not return any content."
+		break
+	}
 
 	switch ($getContent){
 		"" {DisplayBodyInnerText $page}
