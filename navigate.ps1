@@ -159,6 +159,7 @@ function IsInternalLink{
 }
 
 
+# Prepend current page URL to links to sub-domains
 function AppendDomainToInternalLinks{
 	Param(
 		[Parameter(Position=0,
