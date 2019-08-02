@@ -17,7 +17,7 @@ https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/abo
 -  **navigate.ps1** Navigation logic - handles displaying paragraph text and link content of websites.
 
 ## Requirements
-**1. The Internet Explorer engine is installed on your machine** This is because this module only uses the Bing search engine.
+**1. The Internet Explorer engine is installed on your machine** This is because this module only uses the Bing search engine.  
 **2. Execution Policy set to run scripts**  For more information please see documentation on setting execution policies in PowerShell:  
 `PS C:\> Get-Help Set-ExecutionPolicy`
 
