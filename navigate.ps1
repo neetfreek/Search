@@ -63,9 +63,9 @@ function Navigate{
 	}
 
 	switch ($getContent){
-		"" {DisplayBodyInnerText $page}
 		"links" {DisplayLinks $page $navigationURL}
-		"page" {DisplayBodyInnerText $page}
+		"paras" {DisplayBodyInnerText $page}
+		default {DisplayBodyInnerText $page}
 	}	
 }
 
