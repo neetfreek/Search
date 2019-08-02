@@ -97,8 +97,7 @@ function SearchLoop{
 		break
 	}
 	else {
-		DisplayResults $searchResults
-		break
+		return PrependURLNumbers $searchResults
 	}
 	$searchResultsUpdatedLength = $searchResultsUpdated.Length
 	$numberResultsRequested -= $searchResultsUpdatedLength
