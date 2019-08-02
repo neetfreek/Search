@@ -16,6 +16,11 @@ https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/abo
 - **search.ps1** Search logic - handles returning a collection of search term results using the Bing search engine.
 -  **navigate.ps1** Navigation logic - handles displaying paragraph text and link content of websites.
 
+## Requirements
+**1. The Internet Explorer engine is installed on your machine** This is because this module only uses the Bing search engine.
+**2. Execution Policy set to run scripts**  For more information please see documentation on setting execution policies in PowerShell:  
+`PS C:\> Get-Help Set-ExecutionPolicy`
+
 ## Use
 ### Basics
 The most convenient way to use this module is to assign the return values (array collections) from search and navigate to variables. That way you can easily view and continue working with them. Below is an example.  
