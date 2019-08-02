@@ -14,20 +14,20 @@ If you use this module often, it may be worth adding the above line to your prof
 
 ## Use
 ### Basics
-The most convenient way to use this module is to assign the return values (array collections) from search and navigate to variables. That way you can easily view and continue working with them. Below is an example.
-PS C:\> `$searchResults = = search "neetfreek" 10` *(Assigns the first 10 (default 20) search result page URLs for "neetfreek" to the $searchResults variable)*
-PS C:\> `$searchResults` *(Display the 10 page URLs of the $searchResults variable)*
-PS C:\> `navigate $searchResults[0]` *(Displays the paragraph content of the first search result page's URL)*
-PS C:\> `$links = navigate $searchResults[0] -links` *(Assigns the link content of the first search result page's URL to the $links variable)*
-PS C:\> `$links` *(Displays the URL links content of the $links variable)*
+The most convenient way to use this module is to assign the return values (array collections) from search and navigate to variables. That way you can easily view and continue working with them. Below is an example.  
+PS C:\> `$searchResults = = search "neetfreek" 10` *(Assigns the first 10 (default 20) search result page URLs for "neetfreek" to the $searchResults variable)*  
+PS C:\> `$searchResults` *(Display the 10 page URLs of the $searchResults variable)*  
+PS C:\> `navigate $searchResults[0]` *(Displays the paragraph content of the first search result page's URL)*  
+PS C:\> `$links = navigate $searchResults[0] -links` *(Assigns the link content of the first search result page's URL to the $links variable)*  
+PS C:\> `$links` *(Displays the URL links content of the $links variable)*  
 PS C:\> `navigate $links[2]` *(Displays the paragraph content of the third URL link in the $links variable)*
 
 ### Good to Know
-All items in collection variables are zero-indexed. This module thus presents the contents of URL collections prepended with their zero-index indecies for ease-of-use.
-navigate accepts either an object in a collection returned from search (as per the `navigate $links[2]` example above) or a standard-format URL
-navigate accepts an optional parameter, `-getContent`. This parameter accepts either `links` - which gets links - or `paras` - which gets paragraph content from the specified page. Other values are ignored.
+All items in collection variables are zero-indexed. This module thus presents the contents of URL collections prepended with their zero-index indecies for ease-of-use.  
+navigate accepts either an object in a collection returned from search (as per the `navigate $links[2]` example above) or a standard-format URL.  
+navigate accepts an optional parameter, `-getContent`. This parameter accepts either `links` - which gets links - or `paras` - which gets paragraph content from the specified page. Other values are ignored.  
 
 ## More Information and Help
-For more information on using this module as well as further examples, please refer to the `Get-Help` cmdlet for both Search and Navigate:
+For more information on using this module as well as further examples, please refer to the `Get-Help` cmdlet for both Search and Navigate:  
 `PS C:\> Get-Help search`
 `PS C:\> Get-Help navigate`
