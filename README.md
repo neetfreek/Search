@@ -16,7 +16,7 @@ https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/abo
 ## Use
 ### Basics
 The most convenient way to use this module is to assign the return values (array collections) from search and navigate to variables. That way you can easily view and continue working with them. Below is an example.  
-`PS C:\> $searchResults = = search "neetfreek" 10` *(Assigns the first 10 (default 20) search result page URLs for "neetfreek" to the $searchResults variable)*  
+`PS C:\> $searchResults = search "neetfreek" 10` *(Assigns the first 10 (default 20) search result page URLs for "neetfreek" to the $searchResults variable)*  
 `PS C:\> $searchResults` *(Display the 10 page URLs of the $searchResults variable)*  
 `PS C:\> navigate $searchResults[0]` *(Displays the paragraph content of the first search result page's URL)*  
 `PS C:\> $links = navigate $searchResults[0] -links` *(Assigns the link content of the first search result page's URL to the $links variable)*  
@@ -30,5 +30,5 @@ All items in collection variables are zero-indexed. This module thus presents th
 
 ## More Information and Help
 For more information on using this module as well as further examples, please refer to the `Get-Help` cmdlet for both `search` and `navigate`:  
-`PS C:\> Get-Help search`
+`PS C:\> Get-Help search`  
 `PS C:\> Get-Help navigate`
