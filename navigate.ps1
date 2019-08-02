@@ -173,10 +173,12 @@ function AppendDomainToInternalLinks{
 	)
 
 	$linksUpdate = New-Object System.Collections.ArrayList
+	$domainHost = ([System.Uri]$navigationURL).Host
+
 
 	foreach ($URL in $URLCollection){
 		if (IsInternalLink $URL){
-			$URL = $navigationURL + $URL
+			$URL = $domainHost + $URL
 		}
 		$linksUpdate += $URL
 	}
