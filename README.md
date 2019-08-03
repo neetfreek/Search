@@ -19,7 +19,7 @@ https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/abo
 ## Requirements
 **1. The Internet Explorer engine is installed on your machine** This is because this module only uses the Bing search engine.  
 **2. Execution Policy set to run scripts**  For more information please see documentation on setting execution policies in PowerShell:  
-`PS C:\> Get-Help Set-ExecutionPolicy`
+`PS C:\> Get-Help Set-ExecutionPolicy` and `Get-Help Set-ExecutionPolicy`. If you don't want to edit your execution policy, you can copy-pase this the code in the files into new documents.
 
 ## Use
 ### Basics
